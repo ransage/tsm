@@ -1,4 +1,4 @@
-language: nix cpp
+language: nix
 nix: 2.0.4
 
 env:
@@ -37,15 +37,7 @@ script:
     ############################################################################
     # Build main and tests
     ############################################################################
-     - nix-shell
-     - mkdir -p build
-     - cd build
-     # This step will reconfigure to detect dependencies locally and build tsm 
-     - cmake -DBUILD_DEPENDENCIES=OFF -DBUILD_COVERAGE=ON ..
-     # This will run the unit tests as well
-     - make -j`nproc --all` coverage
-     # generate documentation
-     - make -j`nproc --all` tsm_doc
+     - nix-shell && mkdir -p build && cd build && cmake -DBUILD_DEPENDENCIES=OFF -DBUILD_COVERAGE=ON .. && make -j`nproc --all` coverage && make -j`nproc --all` tsm_doc
 
 after_success:
     # Uploading report to CodeCov
