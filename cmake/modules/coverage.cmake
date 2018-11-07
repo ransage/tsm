@@ -16,11 +16,13 @@ if (BUILD_COVERAGE)
   endif(NOT GENHTML_PATH)
 
   set(CMAKE_BUILD_TYPE "Debug")
+  add_definitions("-U_FORTIFY_SOURCE")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
 endif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+
 
   add_custom_target(coverage
     COMMAND ${LCOV_PATH} -z -d .
