@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.7)
 
 project(tsm VERSION 0.1.0)
 LIST(APPEND CMAKE_MODULE_PATH
@@ -72,44 +72,17 @@ else (BUILD_DEPENDENCIES)
     target_include_directories(tsm SYSTEM PRIVATE ${GLOG_INCLUDE_DIRS} ${GFLAGS_INCLUDE_DIRS})
     target_link_libraries(tsm PRIVATE ${GTEST_LIBRARIES} ${GLOG_LIBRARIES} ${GFLAGS_LIBRARIES})
 
-    set (TEST_PROJECT "tsm_test")
+    add_subdirectory(test)
 
-    add_executable(${TEST_PROJECT}
-      test/main.cpp
-      test/EventQueue.cpp
-      test/GarageDoorSM.cpp
-      test/CdPlayerHSM.cpp
-      test/OrthogonalCdPlayerHSM.cpp
-    )
+    # generate documentation
+    find_package(Doxygen)
+    option(BUILD_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" ${DOXYGEN_FOUND})
 
-    target_include_directories(tsm_test
-      PUBLIC ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/test
-      SYSTEM PRIVATE ${GLOG_INCLUDE_DIRS} ${GTEST_INCLUDE_DIRS}
-    )
-
-    target_link_libraries(${TEST_PROJECT}
-      PRIVATE tsm ${GTEST_LIBRARIES} ${GLOG_LIBRARIES} ${GFLAGS_LIBRARIES} pthread)
-
-    include(GoogleTest)
-    gtest_discover_tests(${TEST_PROJECT} TEST_PREFIX "hsm:" TEST_LIST LIST_OF_TESTS)
-    gtest_add_tests(
-      TARGET ${TEST_PROJECT}
-      TEST_LIST ${LIST_OF_TESTS}
-    )
-
-  include(CTest)
-  enable_testing()
-
-  include (coverage)
-
-  find_package(Doxygen)
-  option(BUILD_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" ${DOXYGEN_FOUND})
-
-  if(${DOXYGEN_FOUND})
+    if(${DOXYGEN_FOUND})
       set(DOC_OUTDIR ${CMAKE_CURRENT_BINARY_DIR}/doc CACHE PATH "")
-  endif(${DOXYGEN_FOUND})
+    endif(${DOXYGEN_FOUND})
 
-  if(BUILD_DOCUMENTATION)
+    if(BUILD_DOCUMENTATION)
       if(NOT DOXYGEN_FOUND)
           message(FATAL_ERROR "Doxygen is needed to build the documentation.")
       endif()
@@ -126,7 +99,7 @@ else (BUILD_DEPENDENCIES)
           VERBATIM)
 
       install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html DESTINATION share/doc)
-  endif()
+    endif()
 
 
 
