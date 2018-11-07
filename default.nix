@@ -6,5 +6,5 @@ stdenv.mkDerivation {
 
   cmakeFlags = ["-DGTEST_INCLUDE_DIR=${gtest}/include"];
 
-  buildInputs = [gcc cmake gtest glog];
+  buildInputs = [gcc cmake gtest glog lcov graphviz doxygen];
 }
