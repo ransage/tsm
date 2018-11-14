@@ -6,7 +6,9 @@ stdenv.mkDerivation {
 
   cmakeFlags = ["-GNinja -DGTEST_INCLUDE_DIR=${gtest}/include -DBUILD_COVERAGE=ON"];
   
-  buildInputs = [cmake ninja gflags glog gtest llvm graphviz doxygen];
+  nativeBuildInputs = [cmake ninja];
+
+  buildInputs = [gflags glog gtest graphviz doxygen] ++ (if stdenv.isDarwin then [llvm] else if stdenv.isLinux then [lcov gcc] else throw "unsupported platform");
 
   buildPhase = ''
     cmake --build . --  tsm_all && cmake --build . -- install
