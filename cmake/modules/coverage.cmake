@@ -17,11 +17,11 @@ if (BUILD_COVERAGE)
         message(FATAL_ERROR "GENHTML not found.")
     endif(NOT GENHTML_PATH)
 
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage -U_FORTIFY_SOURCE")
 
     add_custom_target(coverage ALL
-      COMMAND ${LCOV_PATH} -z -d ${CMAKE_BINARY_DIR}
-      COMMAND ${LCOV_PATH} --no-external -c -i -b ${CMAKE_SOURCE_DIR} -d ${CMAKE_SOURCE_DIR} -o ${TEST_PROJECT}_base.info
+      COMMAND ${LCOV_PATH} -z -d ${CMAKE_CURRENT_BINARY_DIR}
+      COMMAND ${LCOV_PATH} --no-external -c -i -d ${CMAKE_SOURCE_DIR} -o ${TEST_PROJECT}_base.info
       COMMAND ${TEST_PROJECT} 
       COMMAND ${LCOV_PATH} --no-external -c -d ${CMAKE_SOURCE_DIR} -o ${TEST_PROJECT}_test.info
       COMMAND ${LCOV_PATH} -a ${TEST_PROJECT}_base.info -a ${TEST_PROJECT}_test.info -o ${TEST_PROJECT}_total.info
