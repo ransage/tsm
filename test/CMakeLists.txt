@@ -9,7 +9,7 @@ add_executable(${TEST_PROJECT}
 )
 
 target_include_directories(tsm_test
-  PUBLIC ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/test
+  PUBLIC ${PROJECT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}
   SYSTEM PRIVATE ${GLOG_INCLUDE_DIRS} ${GTEST_INCLUDE_DIRS}
 )
 
@@ -29,7 +29,4 @@ enable_testing()
 # test coverage
 include(coverage)
 
-
-install(TARGETS ${TEST_PROJECT} RUNTIME DESTINATION bin)
-
-
+install(TARGETS ${TEST_PROJECT} RUNTIME DESTINATION test)

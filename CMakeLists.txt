@@ -9,20 +9,21 @@ LIST(APPEND CMAKE_MODULE_PATH
 #Compiler MUST be at least CXX 14 compliant
 set(CMAKE_CXX_STANDARD 14)
 
+if (NOT CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
+  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
+endif()
+
+if (NOT CMAKE_LIBRARY_OUTPUT_DIRECTORY)
+  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
+endif()
+
+if (NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
+endif()
+
 if (NOT INSTALL_DIR)
     set(INSTALL_DIR ${PROJECT_BINARY_DIR}/${CMAKE_SYSTEM_NAME} CACHE PATH "Install Dir")
 endif(NOT INSTALL_DIR)
-
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT 
-        OR CMAKE_INSTALL_PREFIX STREQUAL "/usr/local" 
-        OR CMAKE_INSTALL_PREFIX MATCHES "^C:/Program Files")
-
-    set(CMAKE_INSTALL_PREFIX ${INSTALL_DIR}
-      CACHE PATH "CMake Install Prefix"
-      FORCE)
-endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT
-        OR CMAKE_INSTALL_PREFIX STREQUAL "/usr/local" 
-        OR CMAKE_INSTALL_PREFIX MATCHES "^C:/Program Files")
 
 #Automatically set build dependencies to on/off
 if (NOT DEFINED BUILD_DEPENDENCIES)
@@ -41,7 +42,6 @@ if (BUILD_DEPENDENCIES)
     set_directory_properties(PROPERTIES EP_BASE ${INSTALL_DIR})
     set(CMAKE_INSTALL_PREFIX ${INSTALL_DIR} CACHE PATH "ThirdParty stuff")
 else (BUILD_DEPENDENCIES)
-
     if(MSVC)
       # Force to always compile with W4
       if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
@@ -63,14 +63,15 @@ else (BUILD_DEPENDENCIES)
     message(STATUS "GTest:" ${GTEST_FOUND} " " ${GTEST_INCLUDE_DIRS} " " ${GTEST_LIBRARIES})
     message(STATUS ${CMAKE_INSTALL_PREFIX})
 
-    add_library(tsm
+    add_library(tsm 
       Event.cpp
       UniqueId.cpp
     )
-    install(TARGETS tsm ARCHIVE DESTINATION lib)
 
     target_include_directories(tsm SYSTEM PRIVATE ${GLOG_INCLUDE_DIRS} ${GFLAGS_INCLUDE_DIRS})
     target_link_libraries(tsm PRIVATE ${GTEST_LIBRARIES} ${GLOG_LIBRARIES} ${GFLAGS_LIBRARIES})
+
+    install(TARGETS tsm ARCHIVE DESTINATION lib)
 
     add_subdirectory(test)
 
@@ -93,15 +94,31 @@ else (BUILD_DEPENDENCIES)
       configure_file(${doxyfile_in} ${doxyfile} @ONLY)
 
       add_custom_target(tsm_doc
-          COMMAND ${DOXYGEN_EXECUTABLE} ${doxyfile}
+        COMMAND ${DOXYGEN_EXECUTABLE} ${doxyfile}
           WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
           COMMENT "Generating API documentation with Doxygen"
           VERBATIM)
 
-      install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html DESTINATION share/doc)
+    install(
+      CODE
+      "
+        message(INFO \"Installing docs to ${CMAKE_INSTALL_PREFIX}/share/doc \")
+        execute_process(COMMAND \${CMAKE_COMMAND} -E copy_directory
+                          ${CMAKE_CURRENT_BINARY_DIR}/docs/html
+                          ${CMAKE_INSTALL_PREFIX}/share/doc
+                      ERROR_VARIABLE error
+                      RESULT_VARIABLE result)
+        if (NOT \${result} EQUAL \"0\")
+          message(FATAL_ERROR \"Installing html doc output error: \${error}, result: \${result}\")
+        endif()
+    ")
     endif()
 
+    add_custom_target(tsm_all
+      COMMAND ;
+      DEPENDS tsm_doc coverage)
 
+  include(CPack)
 
 endif(BUILD_DEPENDENCIES)
 

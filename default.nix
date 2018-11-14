@@ -4,7 +4,17 @@ stdenv.mkDerivation {
   src = ./.;
   enableParallelBuilding = true;
 
-  cmakeFlags = ["-DGTEST_INCLUDE_DIR=${gtest}/include"];
+  cmakeFlags = ["-GNinja -DGTEST_INCLUDE_DIR=${gtest}/include -DBUILD_COVERAGE=ON"];
+  
+  buildInputs = [cmake ninja gflags glog gtest llvm graphviz doxygen];
 
-  buildInputs = [gcc cmake gtest glog lcov graphviz doxygen];
+  buildPhase = ''
+    cmake --build . --  tsm_all && cmake --build . -- install
+  '';
+
+  meta = with stdenv.lib; {
+    description = "tsm, a c++ state machine framework";
+    platforms = with platforms; darwin ++ linux;
+    license = licenses.mit;
+  };
 }
