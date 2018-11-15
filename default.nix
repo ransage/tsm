@@ -4,8 +4,8 @@ stdenv.mkDerivation {
   src = ./.;
   enableParallelBuilding = true;
 
-  cmakeFlags = ["-DGTEST_INCLUDE_DIR=${gtest}/include -DBUILD_COVERAGE=ON"];
-  
+  cmakeFlags = ["-DGTEST_INCLUDE_DIR=${gtest}/include -DBUILD_COVERAGE=ON -DBUILD_DEPENDENCIES=OFF"];
+
   nativeBuildInputs = [cmake ninja graphviz doxygen] ++
     (if stdenv.isDarwin then [llvm]
         else if stdenv.isLinux then [lcov gcc]
@@ -14,7 +14,7 @@ stdenv.mkDerivation {
   buildInputs = [gflags glog gtest] ;
 
   buildPhase = ''
-    cmake --build . --  tsm_all && cmake --build . -- install
+    make install
   '';
 
   meta = with stdenv.lib; {
