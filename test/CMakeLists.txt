@@ -23,9 +23,6 @@ gtest_add_tests(
   TEST_LIST ${LIST_OF_TESTS}
 )
 
-include(CTest)
-enable_testing()
-
 # test coverage
 include(coverage)
 

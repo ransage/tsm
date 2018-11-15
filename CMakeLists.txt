@@ -99,26 +99,11 @@ else (BUILD_DEPENDENCIES)
           COMMENT "Generating API documentation with Doxygen"
           VERBATIM)
 
-    install(
-      CODE
-      "
-        message(INFO \"Installing docs to ${CMAKE_INSTALL_PREFIX}/share/doc \")
-        execute_process(COMMAND \${CMAKE_COMMAND} -E copy_directory
-                          ${CMAKE_CURRENT_BINARY_DIR}/docs/html
-                          ${CMAKE_INSTALL_PREFIX}/share/doc
-                      ERROR_VARIABLE error
-                      RESULT_VARIABLE result)
-        if (NOT \${result} EQUAL \"0\")
-          message(FATAL_ERROR \"Installing html doc output error: \${error}, result: \${result}\")
-        endif()
-    ")
-    endif()
-
-    add_custom_target(tsm_all
-      COMMAND ;
-      DEPENDS tsm_doc coverage)
-
-  include(CPack)
-
+   add_custom_command(TARGET tsm_doc POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                  ${CMAKE_CURRENT_BINARY_DIR}/docs/html
+                  ${CMAKE_INSTALL_PREFIX}/share/doc
+        COMMENT "Installing docs to ${CMAKE_INSTALL_PREFIX}/share/doc")
+  endif()
 endif(BUILD_DEPENDENCIES)
 

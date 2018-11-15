@@ -69,27 +69,13 @@ if (BUILD_COVERAGE)
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
     endif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
 
-    install(
-      CODE
-      "
-        message(INFO \"Installing coverage data to ${CMAKE_INSTALL_PREFIX}\")
-        execute_process(COMMAND \${CMAKE_COMMAND} -E copy_directory
-                          ${CMAKE_CURRENT_BINARY_DIR}/${TEST_PROJECT}-coverage
-                          ${CMAKE_INSTALL_PREFIX}/${TEST_PROJECT}-coverage
-                      ERROR_VARIABLE error
-                      RESULT_VARIABLE result)
-        if (NOT \${result} EQUAL \"0\")
-          message(FATAL_ERROR \"Installing coverage html output error: \${error}, result: \${result}\")
-        endif()
+    add_custom_command(TARGET coverage POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+          ${CMAKE_CURRENT_BINARY_DIR}/${TEST_PROJECT}-coverage
+          ${CMAKE_INSTALL_PREFIX}/${TEST_PROJECT}-coverage
+            && ${CMAKE_COMMAND} -E copy
+          ${CMAKE_CURRENT_BINARY_DIR}/${TEST_PROJECT}.profdata
+          ${CMAKE_INSTALL_PREFIX}/${TEST_PROJECT}-coverage
+        COMMENT "Installing coverage data to ${CMAKE_INSTALL_PREFIX}")
 
-        execute_process(COMMAND \${CMAKE_COMMAND} -E copy
-                          ${CMAKE_CURRENT_BINARY_DIR}/${TEST_PROJECT}.profdata
-                          ${CMAKE_INSTALL_PREFIX}/${TEST_PROJECT}-coverage
-                        ERROR_VARIABLE error
-                        RESULT_VARIABLE result)
-        if (NOT \${result} EQUAL \"0\")
-          message(FATAL_ERROR \"Installing coverage report error: \${error}, result: \${result}\")
-        endif()
-      ")
-        #COMMENT "Open ${CMAKE_INSTALL_PREFIX}/coverage/index.html in your browser to view the coverage report.")
 endif(BUILD_COVERAGE)
