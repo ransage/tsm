@@ -27,12 +27,7 @@ script:
     ############################################################################
     # Build main and tests
     ############################################################################
-    - nix-shell
-    - mkdir build
-    - cd build
-    - cmake -GNinja -DBUILD_COVERAGE=ON -DBUILD_DEPENDENCIES=OFF ..
-    - cmake --build .
-    - exit
+    - nix-shell --run ./build.sh
 after_success:
     # Uploading report to CodeCov
     - bash <(curl -s https://codecov.io/bash) -f "result/tsm_test-coverage/tsm_test.profdata" || echo "Codecov did not collect coverage reports"
