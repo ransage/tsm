@@ -4,11 +4,14 @@ stdenv.mkDerivation {
   src = ./.;
   enableParallelBuilding = true;
 
-  cmakeFlags = ["-GNinja -DGTEST_INCLUDE_DIR=${gtest}/include -DBUILD_COVERAGE=ON"];
+  cmakeFlags = ["-DGTEST_INCLUDE_DIR=${gtest}/include -DBUILD_COVERAGE=ON"];
   
-  nativeBuildInputs = [cmake ninja];
+  nativeBuildInputs = [cmake ninja graphviz doxygen] ++
+    (if stdenv.isDarwin then [llvm]
+        else if stdenv.isLinux then [lcov gcc]
+        else throw "unsupported platform");
 
-  buildInputs = [gflags glog gtest graphviz doxygen] ++ (if stdenv.isDarwin then [llvm] else if stdenv.isLinux then [lcov gcc] else throw "unsupported platform");
+  buildInputs = [gflags glog gtest] ;
 
   buildPhase = ''
     cmake --build . --  tsm_all && cmake --build . -- install
