@@ -1,0 +1,5 @@
+<map id="tsmtest::GarageDoorDef" name="tsmtest::GarageDoorDef">
+<area shape="rect" id="node2" href="$structtsm_1_1StateMachineDef.html" title="{tsm::StateMachineDef\l\&lt; GarageDoorDef \&gt;\n|# table_\l# eventSet_\l|+ StateMachineDef()\l+ StateMachineDef()\l+ ~StateMachineDef()\l+ add()\l+ next()\l+ onEntry()\l+ onExit()\l+ getTable()\l+ getEvents()\l}" alt="" coords="11,580,163,804"/>
+<area shape="rect" id="node3" href="$structtsm_1_1IHsmDef.html" title="{tsm::IHsmDef\n|# parent_\l# currentState_\l# currentHsm_\l|+ IHsmDef()\l+ IHsmDef()\l+ ~IHsmDef()\l+ getStartState()\l+ getStopState()\l+ getCurrentState()\l+ getCurrentHsm()\l+ setCurrentHsm()\l+ getParent()\l+ setParent()\l}" alt="" coords="15,5,148,244"/>
+<area shape="rect" id="node4" href="$structtsm_1_1StateMachineDef.html" title="{tsm::StateMachineDef\l\&lt; HSMDef \&gt;\n|# table_\l# eventSet_\l|+ StateMachineDef()\l+ StateMachineDef()\l+ ~StateMachineDef()\l+ add()\l+ next()\l+ onEntry()\l+ onExit()\l+ getTable()\l+ getEvents()\l}" alt="" coords="103,293,255,517"/>
+</map>
